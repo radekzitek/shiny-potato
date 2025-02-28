@@ -4,8 +4,8 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </nav>
-    <button v-if="!isLoggedIn" @click="login">Login</button>
-    <button v-if="isLoggedIn" @click="logout">Logout</button>
+    <button v-if="!isAuthenticated" @click="login">Login</button>
+    <button v-if="isAuthenticated" @click="logout">Logout</button>
     <p v-if="user">{{ user.username }}</p>
     <router-view />
   </div>
@@ -20,21 +20,32 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import router from "./router";
+import { ref, onMounted } from "vue";
+import auth from "./services/auth";
 
-const isLoggedIn = ref(false);
+const isAuthenticated = ref(false);
 const user = ref(null);
 
 const login = () => {
-  isLoggedIn.value = true;
-  user.value = { username: "vite_user" };
+  auth.login();
 };
 
 const logout = () => {
-  isLoggedIn.value = false;
+  auth.logout();
+  isAuthenticated.value = false;
   user.value = null;
 };
+
+const fetchUserInfo = async () => {
+  if (auth.isAuthenticated()) {
+    isAuthenticated.value = true;
+    user.value = await auth.getProfile();
+  }
+};
+
+onMounted(() => {
+  fetchUserInfo();
+});
 </script>
 
 <style scoped>
