@@ -6,7 +6,7 @@
     </nav>
     <button v-if="!isAuthenticated" @click="login">Login</button>
     <button v-if="isAuthenticated" @click="logout">Logout</button>
-    <p v-if="user">{{ user.username }}</p>
+    <p v-if="user">{{ user.first_name }} {{ user.last_name }} ({{ user.username }})</p>
     <router-view />
   </div>
   <div>
@@ -20,11 +20,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
 import auth from "./services/auth";
 
 const isAuthenticated = ref(false);
 const user = ref(null);
+const route = useRoute();
 
 const login = () => {
   auth.login();
@@ -42,6 +44,14 @@ const fetchUserInfo = async () => {
     user.value = await auth.getProfile();
   }
 };
+
+// Watch for route changes to update authentication state
+watch(
+  () => route.fullPath,
+  () => {
+    fetchUserInfo();
+  }
+);
 
 onMounted(() => {
   fetchUserInfo();

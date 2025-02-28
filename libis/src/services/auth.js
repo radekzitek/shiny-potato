@@ -1,5 +1,6 @@
 // src/services/auth.js
 import router from '../router'
+import SentryService from '../services/sentry'
 
 const AUTH_CONFIG = {
   domain: 'http://localhost:8000',  // Django server URL
@@ -61,7 +62,7 @@ class AuthService {
       code_challenge: codeChallenge,
       code_challenge_method: 'S256'
     }
-    
+
     authUrl.search = new URLSearchParams(params).toString()
     window.location.href = authUrl.toString()
   }
@@ -70,7 +71,7 @@ class AuthService {
   async handleCallback(code) {
     const codeVerifier = localStorage.getItem('code_verifier')
     if (!codeVerifier) {
-      console.error('No code verifier found')
+      SentryService.error('No code verifier found')
       return
     }
     
@@ -93,7 +94,7 @@ class AuthService {
       this.setSession(data)
       router.replace('/')
     } catch (error) {
-      console.error('Error exchanging code for tokens:', error)
+      SentryService.error('Error exchanging code for tokens:', error)
     }
   }
 
@@ -144,14 +145,14 @@ class AuthService {
     }
 
     try {
-      const response = await fetch(`${AUTH_CONFIG.domain}/api/user/profile/`, {
+      const response = await fetch(`${AUTH_CONFIG.domain}/users/me/`, {
         headers: {
           Authorization: `Bearer ${this.accessToken}`
         }
       })
       return await response.json()
     } catch (error) {
-      console.error('Error fetching user profile:', error)
+      SentryService.error('Error fetching user profile:', error)
       return null
     }
   }
