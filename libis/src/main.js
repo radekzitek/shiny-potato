@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import { createPinia } from "pinia"; // Import Pinia
 import App from "./App.vue";
 import router from "./router";
-
+import "mdb-vue-ui-kit/css/mdb.min.css";
 import "./style.css";
 
 import * as Sentry from "@sentry/vue";

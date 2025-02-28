@@ -1,5 +1,6 @@
 <template>
-  <div id="app">
+  <component :is="PageHeader" />
+  <div>
     <nav>
       <router-link to="/">
         Home
@@ -27,34 +28,18 @@
     </p>
     <router-view />
   </div>
-  <div>
-    <a
-      href="https://vite.dev"
-      target="_blank"
-    >
-      <img
-        src="/vite.svg"
-        class="logo"
-        alt="Vite logo"
-      >
-    </a>
-    <a
-      href="https://vuejs.org/"
-      target="_blank"
-    >
-      <img
-        src="./assets/vue.svg"
-        class="logo vue"
-        alt="Vue logo"
-      >
-    </a>
-  </div>
+
+
+  <component :is="PageFooter" />
 </template>
 
 <script setup>
-import { onMounted, watch } from "vue";
+import { onMounted, watch, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useAuthStore } from "./stores/authStore";
+
+import PageHeader from "./components/PageHeader.vue";
+import PageFooter from "./components/PageFooter.vue";
 
 const authStore = useAuthStore();
 const route = useRoute();
@@ -64,7 +49,7 @@ watch(
   () => route.fullPath,
   () => {
     authStore.fetchUser();
-  },
+  }
 );
 
 onMounted(() => {
@@ -73,16 +58,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+#app {
+  font-family: Roboto, Helvetica, Arial, sans-serif;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+
 </style>
