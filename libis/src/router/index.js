@@ -5,7 +5,8 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('../views/HomePage.vue')
+    component: () => import('../views/HomePage.vue'),
+    meta: { title: 'Home' }
   },
   {
     path: '/about',
@@ -14,9 +15,16 @@ const routes = [
     meta: { title: 'About Us' }
   },
   {
+    path: '/callback',
+    name: 'Callback',
+    component: () => import('../views/CallBack.vue'),
+    meta: { title: 'Callback' }
+  },  
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    component: () => import('../views/NotFound.vue')
+    component: () => import('../views/NotFound.vue'),
+    meta: { title: 'Page Not Found' }
   }
 ]
 

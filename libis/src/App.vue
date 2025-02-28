@@ -1,16 +1,14 @@
-<script setup>
-import HelloWorld from "./components/HelloWorld.vue";
-</script>
-
 <template>
   <div id="app">
     <nav>
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </nav>
+    <button v-if="!isLoggedIn" @click="login">Login</button>
+    <button v-if="isLoggedIn" @click="logout">Logout</button>
+    <p v-if="user">{{ user.username }}</p>
     <router-view />
   </div>
-
   <div>
     <a href="https://vite.dev" target="_blank">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
@@ -19,8 +17,25 @@ import HelloWorld from "./components/HelloWorld.vue";
       <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
     </a>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
+
+<script setup>
+import { ref } from "vue";
+import router from "./router";
+
+const isLoggedIn = ref(false);
+const user = ref(null);
+
+const login = () => {
+  isLoggedIn.value = true;
+  user.value = { username: "vite_user" };
+};
+
+const logout = () => {
+  isLoggedIn.value = false;
+  user.value = null;
+};
+</script>
 
 <style scoped>
 .logo {
