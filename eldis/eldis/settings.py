@@ -24,7 +24,10 @@ load_dotenv(dotenv_path)
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)ev(nbi$rc=l2)x%rr!tpx#seaz(647q=b_ne$mn0!tt)1&*=k'
+# SECRET_KEY = 'django-insecure-)ev(nbi$rc=l2)x%rr!tpx#seaz(647q=b_ne$mn0!tt)1&*=k'
+# expecting SECRET_KEY to be set in .env file
+SECRET_KEY = os.getenv('SECRET_KEY')
+# print(SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'oauth2_provider',
+    'corsheaders',
     'users',
 ]
 
@@ -50,6 +54,7 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/admin/login/'
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,6 +63,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'eldis.urls'
 
