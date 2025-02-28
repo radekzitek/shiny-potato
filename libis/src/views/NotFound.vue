@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>About Page</h1>
-        <p>This is the about page</p>
+        <h1>404 Page</h1>
+        <p>This is the 404 page, something got lost.</p>
     </div>
 </template>
