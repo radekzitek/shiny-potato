@@ -95,6 +95,4 @@ const collapse1 = ref(false);
 const dropdown1 = ref(false);
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

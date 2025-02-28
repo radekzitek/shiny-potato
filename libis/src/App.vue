@@ -29,7 +29,6 @@
     <router-view />
   </div>
 
-
   <component :is="PageFooter" />
 </template>
 
@@ -49,7 +48,7 @@ watch(
   () => route.fullPath,
   () => {
     authStore.fetchUser();
-  }
+  },
 );
 
 onMounted(() => {
@@ -61,5 +60,4 @@ onMounted(() => {
 #app {
   font-family: Roboto, Helvetica, Arial, sans-serif;
 }
-
 </style>
