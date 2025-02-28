@@ -1,60 +1,74 @@
 <template>
   <div id="app">
     <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/">
+        Home
+      </router-link> |
+      <router-link to="/about">
+        About
+      </router-link>
     </nav>
-    <button v-if="!isAuthenticated" @click="login">Login</button>
-    <button v-if="isAuthenticated" @click="logout">Logout</button>
-    <p v-if="user">{{ user.first_name }} {{ user.last_name }} ({{ user.username }})</p>
+    <button
+      v-if="!authStore.isAuthenticated"
+      @click="authStore.login"
+    >
+      Login
+    </button>
+    <button
+      v-if="authStore.isAuthenticated"
+      @click="authStore.logout"
+    >
+      Logout
+    </button>
+    <p v-if="authStore.user">
+      {{ authStore.user.first_name }} {{ authStore.user.last_name }} ({{
+        authStore.user.username
+      }})
+    </p>
     <router-view />
   </div>
   <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
+    <a
+      href="https://vite.dev"
+      target="_blank"
+    >
+      <img
+        src="/vite.svg"
+        class="logo"
+        alt="Vite logo"
+      >
     </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
+    <a
+      href="https://vuejs.org/"
+      target="_blank"
+    >
+      <img
+        src="./assets/vue.svg"
+        class="logo vue"
+        alt="Vue logo"
+      >
     </a>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
-import auth from "./services/auth";
+import { useAuthStore } from "./stores/authStore";
 
-const isAuthenticated = ref(false);
-const user = ref(null);
+const authStore = useAuthStore();
 const route = useRoute();
-
-const login = () => {
-  auth.login();
-};
-
-const logout = () => {
-  auth.logout();
-  isAuthenticated.value = false;
-  user.value = null;
-};
-
-const fetchUserInfo = async () => {
-  if (auth.isAuthenticated()) {
-    isAuthenticated.value = true;
-    user.value = await auth.getProfile();
-  }
-};
 
 // Watch for route changes to update authentication state
 watch(
   () => route.fullPath,
   () => {
-    fetchUserInfo();
-  }
+    authStore.fetchUser();
+  },
 );
 
 onMounted(() => {
-  fetchUserInfo();
+  authStore.fetchUser();
 });
 </script>
 

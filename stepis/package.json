@@ -5,24 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "format": "prettier --write 'src/**/*.{js,vue}'",
-    "format.eslint": "eslint --fix 'src/**/*.{js,vue}'",
-    "lint": "eslint 'src/**/*.{js,vue}'",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@sentry/vite-plugin": "^3.2.1",
     "@sentry/vue": "^9.3.0",
-    "pinia": "^3.0.1",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
-    "eslint": "^9.21.0",
-    "eslint-plugin-vue": "^9.32.0",
-    "prettier": "^3.5.2",
     "vite": "^6.2.0"
   }
 }
