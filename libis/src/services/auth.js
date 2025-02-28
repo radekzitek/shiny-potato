@@ -3,13 +3,13 @@ import router from '../router'
 
 const AUTH_CONFIG = {
   domain: 'http://localhost:8000',  // Django server URL
-  clientId: '30H8cnVMZ9fJoK9kaVcsmWW3EYQZgB9pWef3AvDC', // Get this by registering your app in Django admin
+  clientId: '9GWMH1jL9l0Bgynuo5CQW5AGfe6BOJMcMdsJh66X', // Get this by registering your app in Django admin
   redirectUri: 'http://localhost:5173/callback', // Vite default port with callback route
   responseType: 'code',
   scope: 'read write',
   audience: 'api',
-  codeChallenge: 'AUJJxwO9ghEGnz6jN_cIWyJ1pJXGbgLkadfWoXWAkSw',
-  codeVerifier: 'DZ5SSHJAKOMNP0UTJNIASAD3KL3YX0F8TPZJSUMUWRJ5T6S9JHUJ12UZTCX2J2PMZLQJKRBEPI9W6A9B31F8EX3HXNRMC4KIMHKZWN'
+  codeChallenge: '1bevztKqvNATbTd9RWOHtAHdB0P2gf1HCC0HmklqYGk',
+  codeVerifier: 'R3RBTCB9AK4UQY2W7KYJSOMEY80HVP2ND2S6NPKPQVR3EBOTH6WSO9DNA91HG'
 }
 
 class AuthService {
