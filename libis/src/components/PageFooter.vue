@@ -1,12 +1,12 @@
 <template>
   <!-- Footer -->
-  <MDBFooter :text="['center', 'lg-start', 'muted']">
+  <MDBFooter :text="['muted']">
     <!-- Section: Social media -->
     <section
-      class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom"
+      class="d-flex p-3 justify-content-between border-top border-bottom"
     >
       <!-- Left -->
-      <div class="me-5 d-none d-lg-block">
+      <div>
         <span>Get connected with me on social networks:</span>
       </div>
       <!-- Left -->
@@ -59,7 +59,7 @@
         </a>
         <a
           href=""
-          class="me-4 text-reset"
+          class="text-reset"
         >
           <MDBIcon
             icon-style="fab"
@@ -71,19 +71,17 @@
     </section>
     <!-- Section: Social media -->
     <!-- Section: Links  -->
-    <section class="">
-      <MDBContainer class="text-center text-md-start mt-4">
+    <section class="border-bottom p-3">
+      <MDBContainer class="text-start mt-2">
         <!-- Grid row -->
-        <MDBRow class="mb-0">
+        <MDBRow>
           <!-- Grid column -->
           <MDBCol
-            md="3"
-            lg="4"
-            xl="3"
+            md="4"
             class="mx-auto mb-4"
           >
             <!-- Content -->
-            <h6 class="text-uppercase fw-bold mb-4">
+            <h6 class="text-uppercase fw-bold mb-2">
               <i class="fas fa-gem me-3" />Radek Zítek
             </h6>
             <p>
@@ -95,12 +93,10 @@
           <!-- Grid column -->
           <MDBCol
             md="2"
-            lg="2"
-            xl="2"
             class="mx-auto mb-4"
           >
             <!-- Links -->
-            <h6 class="text-uppercase fw-bold mb-4">
+            <h6 class="text-uppercase fw-bold mb-2">
               Products
             </h6>
             <p>
@@ -126,12 +122,10 @@
           <!-- Grid column -->
           <MDBCol
             md="2"
-            lg="2"
-            xl="2"
             class="mx-auto mb-4"
           >
             <!-- Links -->
-            <h6 class="text-uppercase fw-bold mb-0">
+            <h6 class="text-uppercase fw-bold mb-2">
               Useful links
             </h6>
             <p>
@@ -158,16 +152,14 @@
           <!-- Grid column -->
           <MDBCol
             md="4"
-            lg="3"
-            xl="3"
             class="mx-auto mb-4"
           >
             <!-- Links -->
-            <h6 class="text-uppercase fw-bold mb-4">
+            <h6 class="text-uppercase fw-bold mb-2">
               Contact
             </h6>
             <p>
-              <i class="fas fa-home me-3" /> U lesoparku 996, 250 91 Zeleneč
+              <i class="fas fa-home me-3" /> U lesoparku 996, 250 91 Zeleneč, CZ
             </p>
             <p>
               <i class="fas fa-envelope me-3" />
@@ -182,44 +174,12 @@
           </MDBCol>
           <!-- Grid column -->
         </MDBRow>
-        <!-- Grid row -->
-        <MDBRow>
-          <!-- Grid column -->
-          <MDBCol
-            md="3"
-            lg="4"
-            xl="3"
-            class="mx-auto mb-0"
-          >
-            <a
-              href="https://vitejs.dev/"
-              target="_blank"
-            >
-              <img
-                src="/vite.svg"
-                class="logo"
-                alt="Vite logo"
-              >
-            </a>
-            <a
-              href="https://vuejs.org/"
-              target="_blank"
-            >
-              <img
-                src="../assets/vue.svg"
-                class="logo vue"
-                alt="Vue logo"
-              >
-            </a>
-          </MDBCol>
-        </MDBRow>
       </MDBContainer>
     </section>
     <!-- Section: Links  -->
     <!-- Copyright -->
     <div
-      class="text-center p-4"
-      style="background-color: rgba(0, 0, 0, 0.05)"
+      class="text-center border-bottom p-3"
     >
       © 2021 Copyright by
       <a

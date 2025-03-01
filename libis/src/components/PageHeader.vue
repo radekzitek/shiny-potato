@@ -4,6 +4,7 @@
     light
     bg="light"
     container
+    class="border-bottom mb-4"
   >
     <MDBNavbarBrand href="#">
       Carnival
@@ -17,14 +18,22 @@
       v-model="collapse1"
     >
       <MDBNavbarNav class="mb-2 mb-lg-0">
-        <MDBNavbarItem
-          to="#"
-          active
-        >
-          Home
+        <MDBNavbarItem>
+          <router-link
+            to="/"
+            class="nav-link"
+          >
+            Home
+          </router-link>
         </MDBNavbarItem>
-        <MDBNavbarItem href="#">
-          Link
+
+        <MDBNavbarItem>
+          <router-link
+            to="/about"
+            class="nav-link"
+          >
+            About
+          </router-link>
         </MDBNavbarItem>
         <MDBNavbarItem>
           <!-- Navbar dropdown -->
@@ -37,26 +46,35 @@
               class="nav-link"
               @click="dropdown1 = !dropdown1"
             >
-              Dropdown
+              {{ authStore.user ? authStore.user.first_name + ' ' + authStore.user.last_name: 'Sign-in' }}
             </MDBDropdownToggle>
             <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
-              <MDBDropdownItem href="#">
-                Action
+              <MDBDropdownItem 
+                v-if="!authStore.isAuthenticated"
+                href="#"
+                @click="authStore.login"
+              >
+                Login
               </MDBDropdownItem>
-              <MDBDropdownItem href="#">
-                Another Action
+              <MDBDropdownItem 
+                v-if="authStore.isAuthenticated"
+                href="#"
+                @click="authStore.logout"
+              >
+                Logout
               </MDBDropdownItem>
-              <MDBDropdownItem href="#">
-                Something else here
+              <MDBDropdownItem 
+                v-if="authStore.isAuthenticated"
+              >
+                <router-link
+                  to="/profile"
+                  class="dropdown-item"
+                >
+                  Profile
+                </router-link>
               </MDBDropdownItem>
             </MDBDropdownMenu>
           </MDBDropdown>
-        </MDBNavbarItem>
-        <MDBNavbarItem
-          to="#"
-          disabled
-        >
-          Disabled
         </MDBNavbarItem>
       </MDBNavbarNav>
       <!-- Search form -->
@@ -77,6 +95,7 @@
 
 <script setup>
 import { ref } from "vue";
+import { useAuthStore } from "../stores/authStore";
 import {
   MDBBtn,
   MDBNavbar,
@@ -91,6 +110,7 @@ import {
   MDBDropdownItem,
 } from "mdb-vue-ui-kit";
 
+const authStore = useAuthStore();
 const collapse1 = ref(false);
 const dropdown1 = ref(false);
 </script>

@@ -1,35 +1,11 @@
 <template>
-  <component :is="PageHeader" />
-  <div>
-    <nav>
-      <router-link to="/">
-        Home
-      </router-link> |
-      <router-link to="/about">
-        About
-      </router-link>
-    </nav>
-    <button
-      v-if="!authStore.isAuthenticated"
-      @click="authStore.login"
-    >
-      Login
-    </button>
-    <button
-      v-if="authStore.isAuthenticated"
-      @click="authStore.logout"
-    >
-      Logout
-    </button>
-    <p v-if="authStore.user">
-      {{ authStore.user.first_name }} {{ authStore.user.last_name }} ({{
-        authStore.user.username
-      }})
-    </p>
-    <router-view />
+  <div class="app-container">
+    <component :is="PageHeader" />
+    <main class="content-container">
+      <router-view />
+    </main>
+    <component :is="PageFooter" />
   </div>
-
-  <component :is="PageFooter" />
 </template>
 
 <script setup>
@@ -57,6 +33,24 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Add this styling */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-container {
+  flex: 1;
+  width: 100%;
+  padding: 20px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
 #app {
   font-family: Roboto, Helvetica, Arial, sans-serif;
 }
