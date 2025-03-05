@@ -57,6 +57,8 @@ REST_FRAMEWORK = {
     )
 }
 
+# OIDC_RP_INITIATED_LOGOUT_ENABLED = True
+
 AUTH_USER_MODEL = 'users.User'
 
 LOGIN_URL = '/admin/login/'

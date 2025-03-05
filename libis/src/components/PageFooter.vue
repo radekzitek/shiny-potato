@@ -178,9 +178,7 @@
     </section>
     <!-- Section: Links  -->
     <!-- Copyright -->
-    <div
-      class="text-center border-bottom p-3"
-    >
+    <div class="text-center border-bottom p-3">
       © 2021 Copyright by
       <a
         class="text-reset fw-bold"

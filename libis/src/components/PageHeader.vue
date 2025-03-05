@@ -46,26 +46,28 @@
               class="nav-link"
               @click="dropdown1 = !dropdown1"
             >
-              {{ authStore.user ? authStore.user.first_name + ' ' + authStore.user.last_name: 'Sign-in' }}
+              {{
+                authStore.user
+                  ? authStore.user.first_name + " " + authStore.user.last_name
+                  : "Sign-in"
+              }}
             </MDBDropdownToggle>
             <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
-              <MDBDropdownItem 
+              <MDBDropdownItem
                 v-if="!authStore.isAuthenticated"
                 href="#"
                 @click="authStore.login"
               >
                 Login
               </MDBDropdownItem>
-              <MDBDropdownItem 
+              <MDBDropdownItem
                 v-if="authStore.isAuthenticated"
                 href="#"
                 @click="authStore.logout"
               >
                 Logout
               </MDBDropdownItem>
-              <MDBDropdownItem 
-                v-if="authStore.isAuthenticated"
-              >
+              <MDBDropdownItem v-if="authStore.isAuthenticated">
                 <router-link
                   to="/profile"
                   class="dropdown-item"

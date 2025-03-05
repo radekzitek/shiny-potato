@@ -1,58 +1,49 @@
-// src/services/auth.js
-import router from "../router";
 import SentryService from "../services/sentry";
 
 const AUTH_CONFIG = {
-  domain: "http://localhost:8000", // Django server URL
-  clientId: "9GWMH1jL9l0Bgynuo5CQW5AGfe6BOJMcMdsJh66X", // Get this by registering your app in Django admin
-  redirectUri: "http://localhost:5173/callback", // Vite default port with callback route
+  domain: "http://localhost:8000",
+  clientId: "9GWMH1jL9l0Bgynuo5CQW5AGfe6BOJMcMdsJh66X",
+  redirectUri: "http://localhost:5173/callback",
   responseType: "code",
   scope: "read write",
   audience: "api",
-  codeChallenge: "1bevztKqvNATbTd9RWOHtAHdB0P2gf1HCC0HmklqYGk",
-  codeVerifier: "R3RBTCB9AK4UQY2W7KYJSOMEY80HVP2ND2S6NPKPQVR3EBOTH6WSO9DNA91HG",
 };
 
 class AuthService {
-  constructor() {
-    this.accessToken = null;
-    this.refreshToken = null;
-    this.expiresAt = null;
-    this.loadTokens();
-  }
-
   // Generate code verifier for PKCE
   generateCodeVerifier() {
-    const chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+    console.log("Generating code verifier...");
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
     let result = "";
     const randomValues = new Uint8Array(128);
     window.crypto.getRandomValues(randomValues);
     for (let i = 0; i < 128; i++) {
       result += chars[randomValues[i] % chars.length];
     }
+    console.log("Code verifier generated:", result);
     return result;
   }
 
   // Generate code challenge from verifier
   async generateCodeChallenge(codeVerifier) {
+    console.log("Generating code challenge from verifier...");
     const encoder = new TextEncoder();
     const data = encoder.encode(codeVerifier);
     const digest = await window.crypto.subtle.digest("SHA-256", data);
 
-    return btoa(String.fromCharCode(...new Uint8Array(digest)))
+    const codeChallenge = btoa(String.fromCharCode(...new Uint8Array(digest)))
       .replace(/=/g, "")
       .replace(/\+/g, "-")
       .replace(/\//g, "_");
+    console.log("Code challenge generated:", codeChallenge);
+    return codeChallenge;
   }
 
-  // Login - redirect to auth server
-  async login() {
+  // Login - return auth URL and code verifier
+  async getLoginUrl() {
+    console.log("Generating login URL...");
     const codeVerifier = this.generateCodeVerifier();
     const codeChallenge = await this.generateCodeChallenge(codeVerifier);
-
-    // Store code verifier for later use
-    localStorage.setItem("code_verifier", codeVerifier);
 
     const authUrl = new URL(`${AUTH_CONFIG.domain}/o/authorize/`);
     const params = {
@@ -65,15 +56,21 @@ class AuthService {
     };
 
     authUrl.search = new URLSearchParams(params).toString();
-    window.location.href = authUrl.toString();
+
+    console.log("Login URL generated:", authUrl.toString());
+    return {
+      authUrl: authUrl.toString(),
+      codeVerifier,
+    };
   }
 
-  // Handle callback from auth server
-  async handleCallback(code) {
-    const codeVerifier = localStorage.getItem("code_verifier");
+  // Handle callback from auth server - returns token data
+  async fetchTokens(code, codeVerifier) {
+    console.log("Fetching tokens with code and code verifier...");
     if (!codeVerifier) {
-      SentryService.error("No code verifier found");
-      return;
+      SentryService.error("No code verifier provided");
+      console.error("No code verifier provided");
+      return null;
     }
 
     try {
@@ -91,71 +88,123 @@ class AuthService {
         }),
       });
 
-      const data = await response.json();
-      this.setSession(data);
-      router.replace("/");
+      const tokenData = await response.json();
+      console.log("Tokens fetched:", tokenData);
+      return tokenData;
     } catch (error) {
       SentryService.error("Error exchanging code for tokens:", error);
+      console.error("Error exchanging code for tokens:", error);
+      return null;
     }
   }
 
-  // Set session data
-  setSession(authResult) {
-    this.accessToken = authResult.access_token;
-    this.refreshToken = authResult.refresh_token;
-    this.expiresAt = new Date().getTime() + authResult.expires_in * 1000;
+  // Revoke token on the server
+  async revokeToken(token, tokenTypeHint = "access_token") {
+    console.log(`Revoking ${tokenTypeHint}...`);
+    if (!token) {
+      console.warn(`No ${tokenTypeHint} provided`);
+      return;
+    }
 
-    localStorage.setItem("access_token", this.accessToken);
-    localStorage.setItem("refresh_token", this.refreshToken);
-    localStorage.setItem("expires_at", this.expiresAt);
+    try {
+      await fetch(`${AUTH_CONFIG.domain}/o/revoke_token/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          token: token,
+          client_id: AUTH_CONFIG.clientId,
+          token_type_hint: tokenTypeHint,
+        }),
+      });
+      console.log(`${tokenTypeHint} revoked successfully`);
+    } catch (error) {
+      SentryService.error(`Error revoking ${tokenTypeHint}:`, error);
+      console.error(`Error revoking ${tokenTypeHint}:`, error);
+    }
   }
 
-  // Load tokens from local storage
-  loadTokens() {
-    this.accessToken = localStorage.getItem("access_token");
-    this.refreshToken = localStorage.getItem("refresh_token");
-    this.expiresAt = localStorage.getItem("expires_at");
-  }
-
-  // Logout
-  logout() {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("expires_at");
-    localStorage.removeItem("code_verifier");
-
-    this.accessToken = null;
-    this.refreshToken = null;
-    this.expiresAt = null;
-
-    // Optionally revoke token on the server if your provider supports it
-    // this.revokeToken()
-
-    router.push("/");
-  }
-
-  // Check if authenticated
-  isAuthenticated() {
-    return this.accessToken && new Date().getTime() < this.expiresAt;
+  // Logout from the OAuth2 server
+  async logout() {
+    console.log("Logging out from OAuth2 server...");
+    try {
+      await fetch(`${AUTH_CONFIG.domain}/o/logout/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          client_id: AUTH_CONFIG.clientId,
+        }),
+      });
+      console.log("Logged out from OAuth2 server successfully");
+    } catch (error) {
+      SentryService.error("Error logging out from OAuth2 server:", error);
+      console.error("Error logging out from OAuth2 server:", error);
+    }
   }
 
   // Get user profile
-  async getProfile() {
-    if (!this.isAuthenticated()) {
+  async getProfile(accessToken) {
+    console.log("Fetching user profile...");
+    if (!accessToken) {
+      console.warn("No access token provided");
       return null;
     }
 
     try {
       const response = await fetch(`${AUTH_CONFIG.domain}/users/me/`, {
         headers: {
-          Authorization: `Bearer ${this.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
-      return await response.json();
+      const profile = await response.json();
+      console.log("User profile fetched:", profile);
+      return profile;
     } catch (error) {
       SentryService.error("Error fetching user profile:", error);
+      console.error("Error fetching user profile:", error);
       return null;
     }
+  }
+
+  // Refresh token
+  async refreshAccessToken(refreshToken) {
+    console.log("Refreshing access token...");
+    if (!refreshToken) {
+      console.warn("No refresh token provided");
+      return null;
+    }
+
+    try {
+      const response = await fetch(`${AUTH_CONFIG.domain}/o/token/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: refreshToken,
+          client_id: AUTH_CONFIG.clientId,
+        }),
+      });
+
+      const tokenData = await response.json();
+      console.log("Access token refreshed:", tokenData);
+      return tokenData;
+    } catch (error) {
+      SentryService.error("Error refreshing token:", error);
+      console.error("Error refreshing token:", error);
+      return null;
+    }
+  }
+
+  // Check if token is valid
+  isTokenValid(expiresAt) {
+    const isValid = expiresAt && new Date().getTime() < expiresAt;
+    console.log("Token validity checked:", isValid);
+    return isValid;
   }
 }
 
